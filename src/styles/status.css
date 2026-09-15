@@ -1,0 +1,50 @@
+/* ==========================================================================
+   Full page loading and error states
+   ========================================================================== */
+
+.app-status {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+  background: var(--bg);
+  text-align: center;
+}
+
+.app-status__box {
+  max-width: 420px;
+}
+
+.app-status__title {
+  margin-bottom: 8px;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.app-status__text {
+  margin-bottom: 20px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.app-status__spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--line-strong);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: app-status-spin 0.8s linear infinite;
+}
+
+@keyframes app-status-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-status__spinner {
+    animation-duration: 2.4s;
+  }
+}
