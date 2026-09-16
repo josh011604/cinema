@@ -115,6 +115,10 @@ export function CinemaProvider({ children }) {
   // that never receives mail and is never shown on the website. Addresses
   // cannot contain spaces, so "Cinema Admin" becomes "cinema.admin".
   const login = useCallback(async (username, password) => {
+    if (!isSupabaseConfigured) {
+      return { ok: false, error: 'Admin sign in is not configured. Please contact the site owner.' };
+    }
+
     const name = username.trim().toLowerCase().replace(/\s+/g, '.');
     const email = name.includes('@') ? name : `${name}@cinemahouse.local`;
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });

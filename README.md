@@ -18,12 +18,13 @@ npm run preview  # preview the production build
 The staff area lives at `/admin/login` (also linked from the person icon in the header and from
 "Staff Login" in the footer).
 
-| Username | Password   |
-| -------- | ---------- |
-| `Admin`  | `admin123` |
+Authentication uses Supabase. Create the staff user and add it to the `public.admins` table as
+described in [supabase/SETUP.md](supabase/SETUP.md). Staff enter the username portion of the
+placeholder email, such as `admin` for `admin@cinemahouse.local`.
 
-The username is matched case-insensitively; the password is exact. Credentials live in
-`src/context/CinemaContext.jsx` (`ADMIN_CREDENTIALS`).
+For a Vercel deployment, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY` under the
+project's Environment Variables, enable them for the deployed environment, and redeploy. Vite
+embeds these values during the build.
 
 ## Customer booking flow
 
