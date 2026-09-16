@@ -70,6 +70,19 @@
   flex-shrink: 0;
 }
 
+.admin-auth__notice {
+  color: var(--accent-text);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.account-auth__switch {
+  display: block;
+  margin: 20px auto 0;
+  color: var(--accent-text);
+  font-size: 13px;
+}
+
 .admin-auth__submit {
   margin-top: 4px;
   box-shadow: none;

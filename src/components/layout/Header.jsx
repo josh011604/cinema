@@ -19,7 +19,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { isAdmin } = useCinema();
+  const { isAdmin, customer, logout } = useCinema();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -73,13 +73,18 @@ export default function Header() {
               <Icon name="search" size={19} />
             </button>
             <Link
-              to={isAdmin ? '/admin' : '/admin/login'}
+              to={isAdmin ? '/admin' : '/account'}
               className="icon-button"
-              aria-label={isAdmin ? 'Open The Admin Dashboard' : 'Admin Sign In'}
-              title={isAdmin ? 'Admin Dashboard' : 'Admin Sign In'}
+              aria-label={isAdmin ? 'Open The Admin Dashboard' : customer ? 'Open Your Account' : 'Sign Up Or Sign In'}
+              title={isAdmin ? 'Admin Dashboard' : customer ? 'Your Account' : 'Sign Up Or Sign In'}
             >
               <Icon name="user" size={19} />
             </Link>
+            {customer ? (
+              <button type="button" className="link-button site-header__signout" onClick={logout}>
+                Sign Out
+              </button>
+            ) : null}
             <button type="button" className="btn btn--primary btn--sm" onClick={() => navigate('/showtimes')}>
               Buy Ticket
               <Icon name="ticket" size={16} />

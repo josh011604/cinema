@@ -14,6 +14,7 @@ import Booking from './pages/Booking.jsx';
 import Checkout from './pages/Checkout.jsx';
 import Confirmation from './pages/Confirmation.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Account from './pages/Account.jsx';
 import AdminLogin from './pages/admin/AdminLogin.jsx';
 import AdminDashboard from './pages/admin/AdminDashboard.jsx';
 
@@ -32,6 +33,7 @@ export default function App() {
           <Route path="/promotions" element={<Promotions />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/account" element={<Account />} />
           <Route path="/booking/:movieId" element={<Booking />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/confirmation/:code" element={<Confirmation />} />

@@ -142,6 +142,37 @@ export function CinemaProvider({ children }) {
     return { ok: true };
   }, []);
 
+  const signUp = useCallback(async (fullName, email, password) => {
+    if (!isSupabaseConfigured) {
+      return { ok: false, error: 'Account sign up is not configured. Please contact the site owner.' };
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email: email.trim().toLowerCase(),
+      password,
+      options: { data: { full_name: fullName.trim() } }
+    });
+    if (error) {
+      console.error(error);
+      return { ok: false, error: error.message || 'Could Not Create Your Account. Please Try Again.' };
+    }
+
+    return { ok: true, needsConfirmation: Boolean(data.user && !data.session) };
+  }, []);
+
+  const customerLogin = useCallback(async (email, password) => {
+    if (!isSupabaseConfigured) {
+      return { ok: false, error: 'Account sign in is not configured. Please contact the site owner.' };
+    }
+
+    const { error } = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
+    if (error) {
+      console.error(error);
+      return { ok: false, error: 'Incorrect Email Or Password.' };
+    }
+    return { ok: true };
+  }, []);
+
   const logout = useCallback(async () => {
     const { error } = await supabase.auth.signOut();
     if (error) console.error(error);
@@ -162,6 +193,15 @@ export function CinemaProvider({ children }) {
         .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ') || 'Admin';
     return { email, username, signedInAt: session.user.last_sign_in_at };
+  }, [session, adminAccess]);
+
+  const customer = useMemo(() => {
+    if (!session || adminAccess) return null;
+    return {
+      id: session.user.id,
+      fullName: session.user.user_metadata?.full_name || '',
+      email: session.user.email || ''
+    };
   }, [session, adminAccess]);
 
   /* ----------------------------- customer side ---------------------------- */
@@ -335,9 +375,12 @@ export function CinemaProvider({ children }) {
       setDraft,
       clearDraft,
       admin,
+      customer,
       isAdmin: Boolean(admin),
       authReady,
       login,
+      signUp,
+      customerLogin,
       logout,
       bookings,
       bookingsError,
@@ -363,8 +406,11 @@ export function CinemaProvider({ children }) {
       setDraft,
       clearDraft,
       admin,
+      customer,
       authReady,
       login,
+      signUp,
+      customerLogin,
       logout,
       bookings,
       bookingsError,

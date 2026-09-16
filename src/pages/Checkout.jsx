@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import Steps from '../components/Steps.jsx';
 import PaymentForm from '../components/PaymentForm.jsx';
@@ -10,17 +10,31 @@ import { digitsOnly, validateContact, validatePaymentFields } from '../lib/valid
 import { useCinema } from '../context/CinemaContext.jsx';
 
 export default function Checkout() {
-  const { draft, clearDraft, createBooking, pricing } = useCinema();
+  const { draft, clearDraft, createBooking, pricing, customer } = useCinema();
   const navigate = useNavigate();
 
-  const [contact, setContact] = useState({ fullName: '', email: '', phone: '' });
+  const [contact, setContact] = useState(() => ({ fullName: customer?.fullName || '', email: customer?.email || '', phone: '' }));
   const [methodId, setMethodId] = useState('gcash');
-  const [paymentValues, setPaymentValues] = useState({});
+  const [paymentValues, setPaymentValues] = useState(() => (customer?.fullName ? { accountName: customer.fullName, cardName: customer.fullName } : {}));
   const [errors, setErrors] = useState({ contact: {}, payment: {} });
   const [agreed, setAgreed] = useState(false);
   const [agreeError, setAgreeError] = useState('');
   const [processing, setProcessing] = useState(false);
   const [conflict, setConflict] = useState('');
+
+  useEffect(() => {
+    if (!customer) return;
+    setContact((prev) => ({
+      ...prev,
+      fullName: prev.fullName || customer.fullName,
+      email: prev.email || customer.email
+    }));
+    setPaymentValues((prev) => ({
+      ...prev,
+      accountName: prev.accountName || customer.fullName,
+      cardName: prev.cardName || customer.fullName
+    }));
+  }, [customer]);
 
   const method = getPaymentMethod(methodId) || PAYMENT_METHODS[0];
 
@@ -49,6 +63,13 @@ export default function Checkout() {
 
   const changeContact = (name, value) => {
     setContact((prev) => ({ ...prev, [name]: value }));
+    if (name === 'fullName') {
+      setPaymentValues((prev) => ({
+        ...prev,
+        ...(prev.accountName === contact.fullName ? { accountName: value } : {}),
+        ...(prev.cardName === contact.fullName ? { cardName: value } : {})
+      }));
+    }
     setErrors((prev) => ({ ...prev, contact: { ...prev.contact, [name]: undefined } }));
   };
 
@@ -108,7 +129,7 @@ export default function Checkout() {
             <div className="panel">
               <h2 className="panel__title">Your Details</h2>
               <p className="panel__hint">
-                We Send The Ticket And The Booking Code To This Email. No Account Or Password Needed.
+                Your account details are prefilled. You can edit the ticket name or email before paying.
               </p>
 
               <div className="form-grid">
