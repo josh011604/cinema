@@ -67,7 +67,7 @@ export default function Account() {
         <div className="admin-auth__panel">
           <header className="admin-auth__head">
             <h1 className="admin-auth__title">{mode === 'signup' ? 'Create Your Account' : 'Welcome Back'}</h1>
-            <p className="admin-auth__text">Save your details for faster checkout and test bookings in separate accounts.</p>
+            <p className="admin-auth__text">Save your details for faster checkout. Testing is limited to 10 customer accounts.</p>
           </header>
           <form onSubmit={submit} noValidate className="admin-auth__form">
             {mode === 'signup' ? <div className="form-row"><label htmlFor="account-name">Full Name</label><input id="account-name" type="text" autoComplete="name" value={form.fullName} onChange={update('fullName')} placeholder="Juan Dela Cruz" /></div> : null}

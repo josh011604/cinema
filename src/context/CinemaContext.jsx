@@ -154,7 +154,13 @@ export function CinemaProvider({ children }) {
     });
     if (error) {
       console.error(error);
-      return { ok: false, error: error.message || 'Could Not Create Your Account. Please Try Again.' };
+      const limitReached = error.message?.includes('CUSTOMER_ACCOUNT_LIMIT_REACHED');
+      return {
+        ok: false,
+        error: limitReached
+          ? 'The 10-account testing limit has been reached.'
+          : error.message || 'Could Not Create Your Account. Please Try Again.'
+      };
     }
 
     return { ok: true, needsConfirmation: Boolean(data.user && !data.session) };

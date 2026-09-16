@@ -34,6 +34,37 @@ as $$
   select exists (select 1 from public.admins where user_id = auth.uid());
 $$;
 
+-- Keep the customer test environment deliberately small. The advisory lock
+-- makes the count-and-insert decision safe when two people sign up together.
+create or replace function public.enforce_customer_account_limit()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  customer_count integer;
+begin
+  perform pg_advisory_xact_lock(hashtext('cinemahouse.customer_account_limit'));
+
+  select count(*)
+    into customer_count
+  from auth.users u
+  where not exists (select 1 from public.admins a where a.user_id = u.id);
+
+  if customer_count >= 10 then
+    raise exception 'CUSTOMER_ACCOUNT_LIMIT_REACHED';
+  end if;
+
+  return new;
+end;
+$$;
+
+drop trigger if exists customer_account_limit on auth.users;
+create trigger customer_account_limit
+  before insert on auth.users
+  for each row execute function public.enforce_customer_account_limit();
+
 
 -- --------------------------------------------------------------------------
 -- Movies
